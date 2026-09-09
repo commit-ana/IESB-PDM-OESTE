@@ -1,35 +1,35 @@
-
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { rotulo_btn_cadastro_meta } from './mensagem';
-import { rotulo_input_meta } from './mensagem';
-
+import { Image, StyleSheet, View } from 'react-native';
 import { useState } from 'react';
+import MetaInput from './components/Metainput';
+import MetaList from './components/MetaList';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App() {
-  const [inputMetaText, setInputMetaText] = useState('');
   const [metas, setMetas] = useState([]);
 
-function metaInputHandler(inputText){
-  setInputMetaText (inputText);
-}
-function adicionarMetaHandler(){
-  setMetas([...metas, inputMetaText]);
-}
-  return (
-    <View style={styles.mainContainer}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', flex:1}}>
-        <View style={{width:'65%'}}>
-          <TextInput onChangeText={metaInputHandler} style={styles.inputText} placeholder={rotulo_input_meta} />
-        </View>
-        <View style= {{width:'30%'}}>
-          <Button onPress={adicionarMetaHandler} title={rotulo_btn_cadastro_meta} />
-        </View>
-      </View>
+  function adicionarMetaHandler(inputMeta) {
+    const novaMeta = { id: Math.random().toString(), texto: inputMeta };
+    setMetas([...metas, novaMeta]);
+  }
 
-      <View style={styles.metaContainer}>
-        {metas.map((meta, index)=><Text style={styles.item} key={index}>{meta}</Text>)}
-      </View>
-    </View>
+  function deletarMetaHandler(id) {
+    console.log(id);
+    const novasMetas = metas.filter(meta => meta.id !== id);
+    setMetas(novasMetas);
+  }
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <Image source={require('./assets/favicon.png')} style={styles.image} />
+        <View style={styles.mainContainer}>
+          <MetaInput onAddMeta={adicionarMetaHandler} />
+          <View style={styles.metaContainer}>
+            <MetaList onDeleteItem={deletarMetaHandler} array={metas} />
+          </View>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -44,23 +44,23 @@ const styles = StyleSheet.create({
   mainContainer: {
     padding: 30,
     flex: 1,
-    flexDirection: 'column'
-  },
-
-  inputText: {
-    borderColor: "#CCCCCC",
-    borderWidth: 1,
+    flexDirection: 'column',
   },
 
   metaContainer: {
-    flex:1
+    flex: 10,
   },
-
-  item: {
-    margin: 8,
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: 'lightblue'
-  }
-
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  imageContainer: {
+    alignItems: 'flex-start',
+    marginTop: 10,
+    paddingLeft: 30,
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
 });
